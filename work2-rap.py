@@ -11,13 +11,12 @@ X_test, y_test = data['X_test'], data['y_test']
 def GetTrainSubspace(m :int):
     pca_1 = PCA()
     
-    xtr = np.empty((400, np.array(X_train[m][0]).size))
+    xtr = np.empty((np.array(X_train[m][0]).size, 400))
     Lap_tr = np.empty(400)
     
     for p in range(np.array(X_train[m][0]).size):
         for q in range(400):
-            Lap_tr[q] = X_test[m][GetLabelNumForLaplace(q-1),p] + X_test[m][GetLabelNumForLaplace(q-20),p] +X_test[m][GetLabelNumForLaplace(q+1),p] +X_test[m][GetLabelNumForLaplace(q+20),p] - 4 * X_test[m][GetLabelNumForLaplace(q),p]
-        xtr[p] = Lap_tr
+            xtr[p][q] = X_train[m][GetLabelNumForLaplace(q-1),p] + X_train[m][GetLabelNumForLaplace(q-20),p] +X_train[m][GetLabelNumForLaplace(q+1),p] +X_train[m][GetLabelNumForLaplace(q+20),p] - 4 * X_train[m][GetLabelNumForLaplace(q),p]
         
     pca_1.fit(xtr)
     subspace_1 = np.dot(pca_1.components_.T, pca_1.components_)
@@ -27,13 +26,12 @@ def GetTrainSubspace(m :int):
 def GetTestSubspace(m :int):
     pca_2 = PCA()
     
-    xtes = np.empty((400, np.array(X_test[m][0]).size))
+    xtes = np.empty((np.array(X_test[m][0]).size, 400))
     Lap_tes = np.empty(400)
     
     for p in range(np.array(X_test[m][0]).size):
         for q in range(400):
-            Lap_tes[q] = X_test[m][GetLabelNumForLaplace(q-1),p] + X_test[m][GetLabelNumForLaplace(q-20),p] +X_test[m][GetLabelNumForLaplace(q+1),p] +X_test[m][GetLabelNumForLaplace(q+20),p] - 4 * X_test[m][GetLabelNumForLaplace(q),p]
-        xtes[p] = Lap_tes
+            xtes[p][q] = X_test[m][GetLabelNumForLaplace(q-1),p] + X_test[m][GetLabelNumForLaplace(q-20),p] +X_test[m][GetLabelNumForLaplace(q+1),p] +X_test[m][GetLabelNumForLaplace(q+20),p] - 4 * X_test[m][GetLabelNumForLaplace(q),p]
         
     pca_2.fit(xtes)
     subspace_2 = np.dot(pca_2.components_.T, pca_2.components_)
@@ -43,8 +41,10 @@ def GetTestSubspace(m :int):
 def GetLabelNumForLaplace(l :int):
     if (l < 0):
         return 0
-    if (l > 400):
-        return 400
+    if (l > 399):
+        return 399
+    else:
+        return l
 
 def main():
     last_eig_matrix = np.empty((282, 141))
