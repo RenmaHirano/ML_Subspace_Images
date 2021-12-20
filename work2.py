@@ -40,10 +40,12 @@ def main():
         for j in range(141):
             for_eig = np.dot(temp_matrix, GetTrainSubspace(j))
             values = np.linalg.eigvals(for_eig)
-            values = values.real
-            last_eig_matrix[i,j] = abs(values).max()
+            for l in range(values.size):
+                if (values[l].imag != 0):
+                    values[l] = 0
+            last_eig_matrix[i,j] = values.real.max()
     
-    np.savetxt('np_save.csv', last_eig_matrix, fmt='%.5e', delimiter=",")
+    np.savetxt('np_save.csv', last_eig_matrix, fmt='%.15e', delimiter=",")
     
     pass
 
